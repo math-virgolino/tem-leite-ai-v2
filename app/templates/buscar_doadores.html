@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Doadores</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Tem Leite Aí?</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="{{ url_for('index') }}">Início</a>
+            <a class="nav-link" href="{{ url_for('caixa_de_entrada') }}">Caixa de Entrada</a>
+            <a class="nav-link" href="{{ url_for('logout') }}">Sair</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2>Buscar Doadores</h2>
+    
+    <form method="POST" class="mb-4">
+        <div class="d-grid gap-2 col-md-6 mx-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Buscar doadores próximos
+            </button>
+        </div>
+    </form>
+
+    {% if doadores %}
+    <div class="row">
+        {% for item in doadores %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.doador.username }}</h5>
+                    <p class="card-text">
+                        <strong>Distância:</strong> {{ "%.1f"|format(item.distancia) }} km<br>
+                        <strong>Quantidade:</strong> {{ item.doacao.quantidade }} litros<br>
+                        <strong>Data da doação:</strong> {{ item.doacao.data_doacao.strftime('%d/%m/%Y') }}
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('reservar_doacao', doacao_id=item.doacao.id) }}" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Reservar Doação
+                        </a>
+                        <a href="{{ url_for('enviar_mensagem_doacao', doacao_id=item.doacao.id, destinatario_id=item.doador.id) }}" class="btn btn-primary">
+                            <i class="bi bi-chat-dots"></i> Enviar Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% elif request.method == 'POST' %}
+    <div class="alert alert-info">
+        Nenhum doador encontrado em um raio de 50km.
+    </div>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{{ url_for('dashboard_receptor') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para o Dashboard
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

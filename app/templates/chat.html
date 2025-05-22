@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Conversa com {{ destinatario.username }}</h2>
+    
+    <div class="chat-container">
+        <div class="chat-messages">
+            {% for msg in mensagens %}
+            <div class="message {% if msg.remetente_id == current_user.id %}sent{% else %}received{% endif %}">
+                <div class="message-header">
+                    <strong>{% if msg.remetente_id == current_user.id %}Você{% else %}{{ msg.remetente.username }}{% endif %}</strong>
+                    <small class="text-muted">{{ msg.timestamp.strftime('%d/%m/%Y %H:%M') }}</small>
+                </div>
+                <div class="message-content">
+                    {{ msg.conteudo }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" action="{{ url_for('enviar_mensagem', destinatario_id=destinatario.id) }}" class="chat-form">
+            <div class="input-group">
+                <textarea class="form-control" name="conteudo" rows="2" required placeholder="Digite sua mensagem..."></textarea>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-send"></i> Enviar
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{{ url_for('caixa_de_entrada') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar para a caixa de entrada
+        </a>
+    </div>
+</div>
+
+<style>
+    .chat-container {
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .chat-messages {
+        height: 500px;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+    
+    .message {
+        margin-bottom: 15px;
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 18px;
+    }
+    
+    .received {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        margin-right: auto;
+    }
+    
+    .sent {
+        background-color: #007bff;
+        color: white;
+        margin-left: auto;
+    }
+    
+    .message-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        font-size: 0.9em;
+    }
+    
+    .message-content {
+        word-wrap: break-word;
+    }
+    
+    .chat-form {
+        padding: 15px;
+        background-color: #fff;
+        border-top: 1px solid #ddd;
+    }
+    
+    .chat-form textarea {
+        resize: none;
+    }
+</style>
+{% endblock %}
